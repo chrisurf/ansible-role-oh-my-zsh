@@ -1,4 +1,4 @@
-# Ansible Role: Zsh Setup
+# Ansible Role: Oh My Zsh Setup
 
 This Ansible role is designed to set up Oh My Zsh as the default shell environment for users, specifically installing and configuring Zsh with the Powerlevel10k theme, zsh-autosuggestions, and zsh-syntax-highlighting plugins.
 
@@ -32,6 +32,14 @@ This role uses the following variables (found in `vars/main.yml`):
 
 These files should be placed in the `files` directory of the role.
 
+
+## Installation
+
+To install this role, run the following command.
+```sh
+ansible-galaxy role install chrisurf.oh_my_zsh
+```
+
 ## Usage
 
 To use this role, include it in your playbook. Below is an example playbook:
@@ -39,10 +47,10 @@ To use this role, include it in your playbook. Below is an example playbook:
 ```yaml
 - hosts: localhost
   roles:
-    - ansible-role-oh-my-zsh
+    - chrisurf.oh_my_zsh
 ```
 
-Ensure your inventory is set up correctly to target the desired hosts.
+> **Note**: Ensure your inventory is set up correctly to target the desired hosts.
 
 ## License
 
