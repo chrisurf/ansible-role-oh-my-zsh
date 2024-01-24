@@ -1,0 +1,9 @@
+---
+- name: Test Playbook
+  hosts: localhost
+  gather_facts: yes
+  become: true
+  become_method: sudo
+  roles:
+    - ansible-role-oh-my-zsh
+...

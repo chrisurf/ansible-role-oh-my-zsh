@@ -1,0 +1,56 @@
+---
+- name: Update and install Zsh
+  apt:
+    update_cache: yes
+    name: zsh
+    state: latest
+  become: yes
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: Clone Powerlevel10k theme
+  git:
+    repo: 'https://github.com/romkatv/powerlevel10k.git'
+    dest: "~/.oh-my-zsh/themes/powerlevel10k"
+  become_user: "{{ user }}"
+
+- name: Clone zsh-autosuggestions plugin
+  git:
+    repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
+    dest: "~/.oh-my-zsh/plugins/zsh-autosuggestions"
+  become_user: "{{ user }}"
+
+- name: Clone zsh-syntax-highlighting plugin
+  git:
+    repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
+    dest: "~/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+  become_user: "{{ user }}"
+
+- name: Copy .p10k.zsh to home directory
+  copy:
+    src: ../files/.p10k.zsh
+    dest: "~/.p10k.zsh"
+  become_user: "{{ user }}"
+
+- name: Copy .zshrc to home directory
+  copy:
+    src: ../files/.zshrc
+    dest: "~/.zshrc"
+  become_user: "{{ user }}"
+
+- name: Change default shell for {{ user }} user in /etc/passwd
+  lineinfile:
+    path: /etc/passwd
+    regexp: '^{{ user }}:x:[^:]*:[^:]*:[^:]*:[^:]*:/bin/bash'
+    line: '{{ user }}:x:1000:1000::/home/{{ user }}:/bin/zsh'
+    backrefs: yes
+  become: yes
+
+- name: Change default shell for root user in /etc/passwd
+  lineinfile:
+    path: /etc/passwd
+    regexp: '^root:x:0:0:root:/root:/bin/bash'
+    line: 'root:x:0:0:root:/root:/bin/zsh'
+    backrefs: yes
+  become: yes
+...

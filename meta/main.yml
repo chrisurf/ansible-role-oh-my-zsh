@@ -1,0 +1,24 @@
+galaxy_info:
+  role_name: oh_my_zsh
+  author: Chris Oguntolu
+  description: Role to set up Oh My Zsh with Powerlevel10k
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+        - focal      
+    - name: Debian
+      versions:
+        - stretch
+  
+  galaxy_tags:
+  - zsh
+  - omz
+
+dependencies: []
+...
