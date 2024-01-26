@@ -59,7 +59,13 @@ __pycache__/
 # Ansible #
 ###########
 *.retry
+meta/.galaxy_install_info
 
 # SSH Keys
 *.pem
 *.key
+
+# Vagrant
+vagrant/.vagrant
+vagrant/roles/*
+vagrant/custom_vars.yml

@@ -1,0 +1,12 @@
+---
+configs:
+  memory: "2048"
+  cpus: "2"
+  # optional fix a specific ansible version, by changing latest to e.g. "2.11.0"
+  ansible_version: "latest"
+  role_name: "chrisurf.oh_my_zsh"
+  ip: 192.168.56.54
+  domain: domain.lokal
+  aliases:
+  - alias.lokal
+...

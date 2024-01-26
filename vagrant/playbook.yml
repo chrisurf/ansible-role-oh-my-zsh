@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  become_method: sudo
+
+  vars:
+    user: vagrant
+
+  pre_tasks:
+  - name: check for custom_vars.yml file
+    stat:
+      path: custom_vars.yml
+    register: stat_custom_vars
+  - name: load custom vars, if existent
+    include_vars:
+      file: custom_vars.yml
+    when: stat_custom_vars.stat.exists
+
+  roles:
+  - chrisurf.oh_my_zsh
+...

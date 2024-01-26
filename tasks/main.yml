@@ -1,56 +1,65 @@
 ---
 - name: Update and install Zsh
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     name: zsh
     state: latest
-  become: yes
+  become: true
   environment:
     DEBIAN_FRONTEND: noninteractive
 
+- name: Install Oh My Zsh
+  ansible.builtin.shell:
+    cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  args:
+    executable: /bin/bash
+  become: true
+  become_user: "{{ user }}"
+
 - name: Clone Powerlevel10k theme
-  git:
-    repo: 'https://github.com/romkatv/powerlevel10k.git'
+  ansible.builtin.git:
+    repo: "https://github.com/romkatv/powerlevel10k.git"
     dest: "~/.oh-my-zsh/themes/powerlevel10k"
   become_user: "{{ user }}"
 
 - name: Clone zsh-autosuggestions plugin
-  git:
-    repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
+  ansible.builtin.git:
+    repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
     dest: "~/.oh-my-zsh/plugins/zsh-autosuggestions"
   become_user: "{{ user }}"
 
 - name: Clone zsh-syntax-highlighting plugin
-  git:
-    repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
+  ansible.builtin.git:
+    repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
     dest: "~/.oh-my-zsh/plugins/zsh-syntax-highlighting"
   become_user: "{{ user }}"
 
 - name: Copy .p10k.zsh to home directory
-  copy:
+  ansible.builtin.copy:
     src: ../files/.p10k.zsh
     dest: "~/.p10k.zsh"
   become_user: "{{ user }}"
 
 - name: Copy .zshrc to home directory
-  copy:
+  ansible.builtin.copy:
     src: ../files/.zshrc
     dest: "~/.zshrc"
   become_user: "{{ user }}"
 
-- name: Change default shell for {{ user }} user in /etc/passwd
-  lineinfile:
-    path: /etc/passwd
-    regexp: '^{{ user }}:x:[^:]*:[^:]*:[^:]*:[^:]*:/bin/bash'
-    line: '{{ user }}:x:1000:1000::/home/{{ user }}:/bin/zsh'
-    backrefs: yes
-  become: yes
-
 - name: Change default shell for root user in /etc/passwd
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/passwd
-    regexp: '^root:x:0:0:root:/root:/bin/bash'
-    line: 'root:x:0:0:root:/root:/bin/zsh'
-    backrefs: yes
-  become: yes
+    regexp: "^root:x:0:0:root:/root:/bin/bash"
+    line: "root:x:0:0:root:/root:/bin/zsh"
+    backrefs: true
+  become: true
+
+- name: Change default shell for {{ user }} user in /etc/passwd
+  ansible.builtin.lineinfile:
+    path: /etc/passwd
+    regexp: "^{{ user }}:x:[^:]*:[^:]*:[^:]*:[^:]*:/bin/bash"
+    line: "{{ user }}:x:1000:1000::/home/{{ user }}:/bin/zsh"
+    backrefs: true
+  become: true
+  when: user != "root"
 ...

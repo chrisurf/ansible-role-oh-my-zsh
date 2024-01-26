@@ -54,7 +54,7 @@ To use this role, include it in your playbook. Below is an example playbook:
 
 ## License
 
-This project is licensed under [MIT](./LICENSE)
+This project is licensed under [MIT](https://github.com/chrisurf/ansible-role-oh-my-zsh/blob/main/LICENSE)
 
 ## Author Information
 
