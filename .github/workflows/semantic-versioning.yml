@@ -1,0 +1,14 @@
+name: Semantic Versioning
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "version.json"
+      - "CHANGELOG.md"
+
+jobs:
+  version-tagging:
+    permissions: write-all
+    uses: ./.github/workflows/version-tagging.yml
+    secrets:
+      github-token: ${{ secrets.GH_TOKEN }}

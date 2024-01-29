@@ -1,0 +1,88 @@
+name: Semantic Versioning Reusable Workflow
+on:
+  workflow_call:
+    inputs:
+      git-message:
+        required: false
+        type: string
+        description: "Commit message that is used when committing the changelog."
+        default: ":sparkles: release: {version}"
+      git-user-name:
+        required: false
+        type: string
+        description: "The git user.name to use for the commit. Default semantic-versioning-bot."
+        default: "semantic-versioning-bot"
+      git-user-email:
+        required: false
+        type: string
+        description: "The git user.email to use for the commit. Default semantic-versioning-bot@chrisurf.com."
+        default: "semantic-versioning-bot@chrisurf.com"
+      output-file:
+        required: false
+        type: string
+        description: "File to output the changelog to. Default CHANGELOG.md."
+        default: "CHANGELOG.md"
+      version-file:
+        required: false
+        type: string
+        description: "The path to the file that contains the version to bump. Default .github/version.json."
+        default: "version.json"
+      version-path:
+        required: false
+        type: string
+        description: "The place inside the version file to bump. Default version."
+        default: "version"
+      skip-on-empty:
+        required: false
+        type: string
+        description: "Boolean to specify if you want to skip empty release (no-changelog generated)."
+        default: "false"
+      skip-ci:
+        required: false
+        type: string
+        description: "Adds instruction to Github to not consider the push something to rebuild. Default false"
+        default: "false"
+      create-summary:
+        required: false
+        type: string
+        description: "Adds the generated changelog as Action Summary. Default true"
+        default: "true"
+      release-count:
+        required: false
+        type: string
+        description: "Number of releases to preserve in changelog. Default 0 to regenerate all."
+        default: "0"        
+    secrets:
+      github-token:
+        required: false
+        description: "Github token, if different permissions required than from checkout."
+
+jobs:
+  semantic-versioning:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.github-token }}            
+      - name: Calculate Conventional Commits
+        id: versioning
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.github-token }}
+          git-message: ${{ inputs.git-message }}
+          git-user-name: ${{ inputs.git-user-name }}
+          git-user-email: ${{ inputs.git-user-email }}
+          output-file: ${{ inputs.output-file }}
+          version-file: ${{ inputs.version-file }}
+          version-path: ${{ inputs.version-path }}
+          skip-on-empty: ${{ inputs.skip-on-empty }}
+          skip-ci: ${{ inputs.skip-ci }}
+          create-summary: ${{ inputs.create-summary }}
+          release-count: ${{ inputs.release-count }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.github-token }}
+          name: ${{ steps.versioning.outputs.version }}
+          tag_name: ${{ steps.versioning.outputs.version }}
