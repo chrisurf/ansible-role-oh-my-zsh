@@ -1,29 +1,27 @@
 # Ansible Role: Oh My Zsh Setup
 
-This Ansible role is designed to set up Oh My Zsh as the default shell environment for users, specifically installing and configuring Zsh with the Powerlevel10k theme, zsh-autosuggestions, and zsh-syntax-highlighting plugins.
+This Ansible role is designed to install and set up Oh My Zsh as the default shell environment for users, specifically installing and configuring Oh My Zsh with the Powerlevel10k theme, zsh-autosuggestions, and zsh-syntax-highlighting plugins.
 
 ## Features
 
-- Installs Zsh and sets it as the default shell.
-- Clones and configures the Powerlevel10k theme for a rich, customizable Zsh experience.
+- Installs Oh My Zsh and sets it as the default shell.
+- Clones and configures the Powerlevel10k theme for a rich, customizable Oh My Zsh experience.
 - Adds zsh-autosuggestions and zsh-syntax-highlighting for enhanced command-line productivity.
-- Copies custom Zsh configuration files for immediate use.
-- Configures both the `node` and `root` users with the new shell settings. 
+- Copies custom Zsh and Powerlevel10k configuration files for immediate use.
+- Configures both the `root` and `{CUSTOM}` users with the new shell settings.
 
 ## Requirements
 
 - Target systems should be based on Debian or Ubuntu (due to the use of the `apt` module).
-- Ansible 2.9 or higher.
+- Ansible 2.11 or higher.
 - SSH access to the target machines.
 - Sudo privileges on the target machines.
 
 ## Role Variables
 
-This role uses the following variables (found in `vars/main.yml`):
+This role uses the following variables (found in `defaults/main.yml`):
 
-- `powerlevel10k_repo`: URL to the Powerlevel10k Git repository.
-- `zsh_autosuggestions_repo`: URL to the zsh-autosuggestions Git repository.
-- `zsh_syntax_highlighting_repo`: URL to the zsh-syntax-highlighting Git repository.
+- `user`: **(Optional)** A custom system user of your choice.
 
 ## Files
 
@@ -32,10 +30,10 @@ This role uses the following variables (found in `vars/main.yml`):
 
 These files should be placed in the `files` directory of the role.
 
-
 ## Installation
 
 To install this role, run the following command.
+
 ```sh
 ansible-galaxy role install chrisurf.oh_my_zsh
 ```

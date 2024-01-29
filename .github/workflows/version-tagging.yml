@@ -84,5 +84,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.github-token }}
-          name: ${{ steps.versioning.outputs.version }}
-          tag_name: ${{ steps.versioning.outputs.version }}
+          name: ${{ steps.versioning.outputs.tag }}
+          tag_name: ${{ steps.versioning.outputs.tag }}
