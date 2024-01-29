@@ -8,11 +8,17 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
 
+- name: Check if Oh My Zsh is already installed
+  ansible.builtin.stat:
+    path: "~/.oh-my-zsh"
+  register: ohmyzsh_stat
+
 - name: Install Oh My Zsh
   ansible.builtin.shell:
     cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   args:
     executable: /bin/bash
+  when: not ohmyzsh_stat.stat.exists
   become: true
   become_user: "{{ user }}"
 
