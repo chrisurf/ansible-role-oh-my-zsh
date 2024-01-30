@@ -21,7 +21,7 @@ This Ansible role is designed to install and set up Oh My Zsh as the default she
 
 This role uses the following variables (found in `defaults/main.yml`):
 
-- `user`: **(Optional)** A custom system user of your choice.
+- `omz_user`: **(Optional)** A custom system user of your choice.
 
 ## Files
 
