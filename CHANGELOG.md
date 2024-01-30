@@ -1,3 +1,7 @@
+## [1.0.4](https://github.com/chrisurf/ansible-role-oh-my-zsh/compare/v1.0.3...v1.0.4) (2024-01-30)
+
+
+
 ## [1.0.3](https://github.com/chrisurf/ansible-role-oh-my-zsh/compare/v1.0.2...v1.0.3) (2024-01-29)
 
 
