@@ -69,6 +69,25 @@ To configure Oh My Zsh for a non-root user, override `omz_user`:
 
 > **Note**: Ensure your inventory is set up correctly to target the desired hosts.
 
+## Dev Container
+
+The role works inside a [Dev Container](https://containers.dev/) because it only
+installs packages and writes dotfiles — it does not rely on systemd or any
+running service. A ready-to-use example lives in [`.devcontainer/`](.devcontainer):
+
+- `devcontainer.json` — an Ubuntu base image with the Python feature, and zsh
+  set as the integrated terminal's default shell.
+- `post-create.sh` — installs Ansible, pulls the role from Galaxy and runs it.
+- `playbook.yml` — applies the role to the container's `vscode` user.
+
+Open the repository in a Dev Container (VS Code / GitHub Codespaces) and Oh My
+Zsh is provisioned automatically on first start. Requirements:
+
+- A Debian/Ubuntu or RedHat/Rocky based image.
+- The remote user must have (passwordless) `sudo`, since the role escalates to
+  install packages and set the default shell.
+- Outbound network access at build time for the role and its plugins.
+
 ## Testing
 
 This role is tested with [Molecule](https://ansible.readthedocs.io/projects/molecule/)
