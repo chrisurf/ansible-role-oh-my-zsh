@@ -3,26 +3,13 @@
   hosts: all
 
   vars:
-    user: root
+    omz_user: root
 
   tasks:
 
-    - name: Install Git on Debian/Ubuntu
-      ansible.builtin.apt:
-        name: git
-        state: present
-        update_cache: true
-      when: ansible_facts['os_family'] == "Debian"
-      become: true
-
-    - name: Install Git on RedHat/CentOS
-      ansible.builtin.yum:
-        name: git
-        state: present
-      when: ansible_facts['os_family'] == "RedHat"
-      become: true
-
+    # git and curl are installed by the role itself, so no extra
+    # pre-tasks are required here.
     - name: "Include chrisurf.oh_my_zsh"
-      include_role:
+      ansible.builtin.include_role:
         name: "chrisurf.oh_my_zsh"
 ...

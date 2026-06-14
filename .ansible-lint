@@ -1,0 +1,8 @@
+---
+# Paths that are not part of the role proper (CI workflows, manual test and
+# Vagrant playbooks) are excluded from ansible-lint.
+exclude_paths:
+- .github/
+- tests/
+- vagrant/
+...

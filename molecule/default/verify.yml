@@ -1,13 +1,33 @@
 ---
-# This is an example playbook to execute Ansible tests.
+# Verifies that Oh My Zsh and its dependencies were configured for the root user.
 
 - name: Verify
   hosts: all
   gather_facts: false
   tasks:
 
-  - name: Fail intentionally
-    ansible.builtin.assert:
-      that: true == false
+    - name: Stat Oh My Zsh installation and dependencies
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /root/.oh-my-zsh
+        - /root/.oh-my-zsh/themes/powerlevel10k
+        - /root/.oh-my-zsh/plugins/zsh-autosuggestions
+        - /root/.oh-my-zsh/plugins/zsh-syntax-highlighting
+        - /root/.zshrc
+        - /root/.p10k.zsh
+      register: omz_paths
 
+    - name: Read the root user shell from /etc/passwd
+      ansible.builtin.command: getent passwd root
+      register: root_passwd
+      changed_when: false
+
+    - name: Assert Oh My Zsh is installed and configured
+      ansible.builtin.assert:
+        that:
+          - omz_paths.results | map(attribute='stat.exists') | select('equalto', false) | list | length == 0
+          - "':/bin/zsh' in root_passwd.stdout"
+        fail_msg: "Oh My Zsh was not configured correctly."
+        success_msg: "Oh My Zsh is installed and configured for root."
 ...

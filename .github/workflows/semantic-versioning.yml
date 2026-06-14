@@ -1,3 +1,4 @@
+---
 name: Semantic Versioning
 on:
   push:
@@ -12,3 +13,4 @@ jobs:
     uses: ./.github/workflows/version-tagging.yml
     secrets:
       github-token: ${{ secrets.GH_TOKEN }}
+...
