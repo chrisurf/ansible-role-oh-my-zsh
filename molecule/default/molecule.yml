@@ -9,7 +9,6 @@ platforms:
 # Images are the systemd-enabled geerlingguy/docker-*-ansible images.
 - name: "omz-${MOLECULE_DISTRO:-ubuntu2204}"
   image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2204}-ansible:latest"
-  command: "${MOLECULE_DOCKER_COMMAND:-}"
   volumes:
   - /sys/fs/cgroup:/sys/fs/cgroup:rw
   cgroupns_mode: host
