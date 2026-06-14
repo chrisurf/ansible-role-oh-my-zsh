@@ -1,71 +1,105 @@
 ---
-- name: Update and install Zsh
+- name: Assert the target OS is supported
+  ansible.builtin.assert:
+    that: ansible_facts['os_family'] in ["Debian", "RedHat"]
+    fail_msg: >-
+      This role only supports Debian/Ubuntu and RedHat/Rocky based systems
+      (detected os_family: {{ ansible_facts['os_family'] | default('unknown') }}).
+  tags: [always]
+
+- name: Resolve home directory for {{ omz_user }}
+  ansible.builtin.set_fact:
+    omz_home: "{{ '/root' if omz_user == 'root' else '/home/' + omz_user }}"
+  tags: [always]
+
+- name: Update apt cache (Debian/Ubuntu)
   ansible.builtin.apt:
     update_cache: true
-    name: zsh
-    state: latest
+    cache_valid_time: 3600
+  become: true
+  when: ansible_facts['os_family'] == "Debian"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [install]
+
+- name: Install required packages
+  ansible.builtin.package:
+    # curl is only added on Debian/Ubuntu; on RedHat/Rocky the curl command is
+    # already provided by curl-minimal and installing curl would conflict.
+    name: "{{ ['zsh', 'git'] + (['curl'] if ansible_facts['os_family'] == 'Debian' else []) }}"
+    state: present
   become: true
   environment:
     DEBIAN_FRONTEND: noninteractive
-
-- name: Check if Oh My Zsh is already installed
-  ansible.builtin.stat:
-    path: "~/.oh-my-zsh"
-  register: ohmyzsh_stat
+  tags: [install]
 
 - name: Install Oh My Zsh
   ansible.builtin.shell:
     cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  args:
+    creates: "{{ omz_home }}/.oh-my-zsh"
     executable: /bin/bash
-  when: not ohmyzsh_stat.stat.exists
+  environment:
+    RUNZSH: "no"
+    CHSH: "no"
+    KEEP_ZSHRC: "yes"
   become: true
   become_user: "{{ omz_user }}"
+  tags: [install]
 
 - name: Clone Powerlevel10k theme
   ansible.builtin.git:
     repo: "https://github.com/romkatv/powerlevel10k.git"
-    dest: "~/.oh-my-zsh/themes/powerlevel10k"
+    dest: "{{ omz_home }}/.oh-my-zsh/themes/powerlevel10k"
+    version: "{{ omz_p10k_version }}"
+    depth: 1
+  become: true
   become_user: "{{ omz_user }}"
+  tags: [plugins]
 
 - name: Clone zsh-autosuggestions plugin
   ansible.builtin.git:
     repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-    dest: "~/.oh-my-zsh/plugins/zsh-autosuggestions"
+    dest: "{{ omz_home }}/.oh-my-zsh/plugins/zsh-autosuggestions"
+    version: "{{ omz_autosuggestions_version }}"
+    depth: 1
+  become: true
   become_user: "{{ omz_user }}"
+  tags: [plugins]
 
 - name: Clone zsh-syntax-highlighting plugin
   ansible.builtin.git:
     repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-    dest: "~/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+    dest: "{{ omz_home }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+    version: "{{ omz_syntax_highlighting_version }}"
+    depth: 1
+  become: true
   become_user: "{{ omz_user }}"
+  tags: [plugins]
 
 - name: Copy .p10k.zsh to home directory
   ansible.builtin.copy:
-    src: ../files/.p10k.zsh
-    dest: "~/.p10k.zsh"
+    src: .p10k.zsh
+    dest: "{{ omz_home }}/.p10k.zsh"
+    owner: "{{ omz_user }}"
+    mode: "0644"
+  become: true
   become_user: "{{ omz_user }}"
+  tags: [config]
 
 - name: Copy .zshrc to home directory
   ansible.builtin.copy:
-    src: ../files/.zshrc
-    dest: "~/.zshrc"
+    src: .zshrc
+    dest: "{{ omz_home }}/.zshrc"
+    owner: "{{ omz_user }}"
+    mode: "0644"
+  become: true
   become_user: "{{ omz_user }}"
+  tags: [config]
 
-- name: Change default shell for root user in /etc/passwd
-  ansible.builtin.lineinfile:
-    path: /etc/passwd
-    regexp: "^root:x:0:0:root:/root:/bin/bash"
-    line: "root:x:0:0:root:/root:/bin/zsh"
-    backrefs: true
+- name: Set Zsh as the default shell for {{ omz_user }}
+  ansible.builtin.user:
+    name: "{{ omz_user }}"
+    shell: /bin/zsh
   become: true
-
-- name: Change default shell for {{ omz_user }} user in /etc/passwd
-  ansible.builtin.lineinfile:
-    path: /etc/passwd
-    regexp: "^{{ omz_user }}:x:[^:]*:[^:]*:[^:]*:[^:]*:/bin/bash"
-    line: "{{ omz_user }}:x:1000:1000::/home/{{ omz_user }}:/bin/zsh"
-    backrefs: true
-  become: true
-  when: omz_user != "root"
+  tags: [config]
 ...

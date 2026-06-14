@@ -60,6 +60,7 @@ __pycache__/
 ###########
 *.retry
 meta/.galaxy_install_info
+.ansible/
 
 # SSH Keys
 *.pem

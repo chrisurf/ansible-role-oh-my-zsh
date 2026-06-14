@@ -1,3 +1,4 @@
+---
 name: Semantic Versioning Reusable Workflow
 on:
   workflow_call:
@@ -51,7 +52,7 @@ on:
         required: false
         type: string
         description: "Number of releases to preserve in changelog. Default 0 to regenerate all."
-        default: "0"        
+        default: "0"
     secrets:
       github-token:
         required: false
@@ -64,7 +65,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.github-token }}            
+          token: ${{ secrets.github-token }}
       - name: Calculate Conventional Commits
         id: versioning
         uses: TriPSs/conventional-changelog-action@v5
@@ -86,3 +87,4 @@ jobs:
           token: ${{ secrets.github-token }}
           name: ${{ steps.versioning.outputs.tag }}
           tag_name: ${{ steps.versioning.outputs.tag }}
+...

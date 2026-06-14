@@ -1,0 +1,13 @@
+---
+- name: Set up Oh My Zsh in the dev container
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    # Configure Oh My Zsh for the dev container's default non-root user.
+    omz_user: vscode
+
+  roles:
+    - chrisurf.oh_my_zsh
+...

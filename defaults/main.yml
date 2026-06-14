@@ -1,4 +1,11 @@
 ---
 # Default Variables
+
+# System user that Oh My Zsh is installed and configured for.
 omz_user: root
+
+# Pinned versions for the theme and plugins (any git ref: tag, branch or commit).
+omz_p10k_version: v1.20.0
+omz_autosuggestions_version: v0.7.1
+omz_syntax_highlighting_version: 0.8.0
 ...

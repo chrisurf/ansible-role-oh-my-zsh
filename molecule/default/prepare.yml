@@ -1,0 +1,19 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  become: false
+
+  tasks:
+    # Enterprise Linux (Rocky/RHEL) container images ship a sudo PAM stack that
+    # references pam_sss / pam_systemd. Those modules fail inside a container
+    # ("PAM account management error: Authentication service cannot retrieve
+    # authentication info"), which breaks every become task. We connect as root,
+    # so we can strip those lines directly. The targeted files only exist on EL,
+    # so this is a no-op on Debian/Ubuntu.
+    - name: Work around the broken sudo PAM stack in EL containers
+      ansible.builtin.raw: >-
+        sed -ri '/pam_(systemd|sss)\.so/d'
+        /etc/pam.d/system-auth /etc/pam.d/password-auth 2>/dev/null || true
+      changed_when: false
+...

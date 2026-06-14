@@ -1,0 +1,68 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+  workflow_dispatch: {}
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install lint dependencies
+        run: pip install yamllint ansible-lint
+
+      - name: Run yamllint
+        run: yamllint .
+
+      - name: Run ansible-lint
+        run: ansible-lint
+
+  molecule:
+    name: Molecule (${{ matrix.distro }})
+    runs-on: ubuntu-latest
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - ubuntu2204
+          - ubuntu2004
+          - debian12
+          - debian11
+          - rockylinux9
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v4
+        with:
+          # Check out under the fully qualified role name so the role can be
+          # resolved by "chrisurf.oh_my_zsh" in the converge playbook.
+          path: chrisurf.oh_my_zsh
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: pip install "molecule>=6" "molecule-plugins[docker]" ansible-core docker
+
+      - name: Run Molecule tests
+        run: molecule test
+        working-directory: chrisurf.oh_my_zsh
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
+...
