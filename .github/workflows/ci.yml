@@ -3,9 +3,8 @@ name: CI
 
 on:
   push:
-    branches-ignore: [main]
-  pull_request:
     branches: [main]
+  pull_request: {}
   workflow_dispatch: {}
 
 jobs:
@@ -43,7 +42,6 @@ jobs:
           - debian12
           - debian11
           - rockylinux9
-          - rockylinux8
     steps:
       - name: Check out the codebase
         uses: actions/checkout@v4

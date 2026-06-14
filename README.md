@@ -77,7 +77,7 @@ every push and pull request, across multiple distributions:
 
 - Ubuntu 22.04 (`ubuntu2204`) and 20.04 (`ubuntu2004`)
 - Debian 12 (`debian12`) and 11 (`debian11`)
-- Rocky Linux 9 (`rockylinux9`) and 8 (`rockylinux8`)
+- Rocky Linux 9 (`rockylinux9`)
 
 To run the tests locally:
 
