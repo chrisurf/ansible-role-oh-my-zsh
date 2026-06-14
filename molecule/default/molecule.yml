@@ -16,6 +16,12 @@ platforms:
   pre_build_image: true
 provisioner:
   name: ansible
+  inventory:
+    group_vars:
+      all:
+        # Connect as root so the prepare playbook can repair the EL sudo PAM
+        # stack and the role's become tasks escalate cleanly inside containers.
+        ansible_user: root
 verifier:
   name: ansible
 ...
